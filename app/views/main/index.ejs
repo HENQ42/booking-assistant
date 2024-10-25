@@ -1,0 +1,126 @@
+<%- include('../partials/header') %>
+
+  <main>
+    <h2>Reservas Pendentes</h2>
+
+    <% if (reservations && reservations.length> 0) { %>
+      <ul id="reservation-list">
+        <% reservations.forEach(function(reservation) { const data=reservation.reservation_details.reservation_data; %>
+          <li class="reservation-item" id="reservation-<%= reservation.id %>">
+            <h3>Reserva ID: <%= reservation.id %>
+            </h3>
+            <p><strong>Nome do Cliente:</strong>
+              <%= data.nome_cliente %>
+            </p>
+            <p><strong>Data de Check-in:</strong>
+              <%= data.data_check_in %>
+            </p>
+            <p><strong>Data de Check-out:</strong>
+              <%= data.data_check_out %>
+            </p>
+            <p><strong>Tipo de Quarto:</strong>
+              <%= data.tipo_quarto %>
+            </p>
+            <p><strong>Número de Hóspedes:</strong>
+              <%= data.numero_hospedes %>
+            </p>
+            <% if (data.preferencias_especiais) { %>
+              <p><strong>Preferências Especiais:</strong>
+                <%= data.preferencias_especiais %>
+              </p>
+              <% } %>
+                <% if (data.detalhes_pagamento) { %>
+                  <p><strong>Detalhes do Pagamento:</strong>
+                    <%= data.detalhes_pagamento %>
+                  </p>
+                  <% } %>
+                    <% if (data.informacoes_contato) { %>
+                      <p><strong>Informações de Contato:</strong>
+                        <%= data.informacoes_contato %>
+                      </p>
+                      <% } %>
+                        <p><strong>Enviado por:</strong>
+                          <%= reservation.from_email %>
+                        </p>
+                        <p><strong>Data de Envio:</strong>
+                          <%= reservation.sent_date %>
+                        </p>
+                        <div class="reservation-actions">
+                          <button class="confirm-button" data-id="<%= reservation.id %>">Confirmar Reserva</button>
+                          <button class="reject-button" data-id="<%= reservation.id %>">Rejeitar Reserva</button>
+                        </div>
+          </li>
+          <% }); %>
+      </ul>
+      <% } else { %>
+        <p>Nenhuma reserva pendente.</p>
+        <% } %>
+  </main>
+
+  <script>
+    $(document).ready(function () {
+      // Ação de confirmar reserva
+      $('.confirm-button').on('click', function () {
+        const reservationId = $(this).data('id');
+
+        $.ajax({
+          url: '/api/confirm-reservation',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ reservationId: reservationId }),
+          success: function (response) {
+            // console.log(response);
+            alert('Reserva confirmada com sucesso!');
+
+            if (response.success) {
+              $.ajax({
+                url: '/api/reject-reservation',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ reservationId: reservationId }),
+                success: function (response) {
+                  console.log(response.message);
+                  $(`#reservation-${reservationId}`).remove();
+                  console.log('Reserva apagada com sucesso!');
+                },
+                error: function (xhr) {
+                  console.error(`Erro ao rejeitar reserva ${reservationId}:`, xhr.responseText);
+                  alert('Erro ao rejeitar reserva. Tente novamente.');
+                }
+              });
+            }
+
+
+          },
+          error: function (xhr) {
+            console.error(`Erro ao confirmar reserva ${reservationId}:`, xhr.responseText);
+            alert('Erro ao confirmar reserva. Tente novamente.');
+          }
+        });
+
+      });
+
+      // Ação de rejeitar reserva
+      $('.reject-button').on('click', function () {
+        const reservationId = $(this).data('id');
+
+        $.ajax({
+          url: '/api/reject-reservation',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ reservationId: reservationId }),
+          success: function (response) {
+            console.log(response.message);
+            $(`#reservation-${reservationId}`).remove();
+            alert('Reserva apagada com sucesso!');
+          },
+          error: function (xhr) {
+            console.error(`Erro ao rejeitar reserva ${reservationId}:`, xhr.responseText);
+            alert('Erro ao rejeitar reserva. Tente novamente.');
+          }
+        });
+      });
+    });
+  </script>
+
+  <%- include('../partials/footer') %>

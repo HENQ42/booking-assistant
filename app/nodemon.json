@@ -1,0 +1,14 @@
+{
+    "watch": [
+      "routes/",
+      "views/",
+      "public/",
+      "*.js"
+    ],
+    "ext": "js,ejs,css,html",
+    "ignore": [
+      "node_modules/"
+    ],
+    "exec": "node index.js & json-server --watch db/db.json --port 5005"
+  }
+  
