@@ -11,10 +11,20 @@ def process_email():
 
     # Verificar se o e-mail é uma solicitação de reserva
     is_reservation = reservation_detector(email_content)
+    print("É uma reserva?", is_reservation)
 
     if is_reservation in 'Sim':
         # Extrair dados da reserva
         reservation_data = data_extractor(email_content)
+        print("dados da reserva: ", reservation_data, "\n")
+
+        #verificação de extração
+        if reservation_data == "Negado":
+            return jsonify({
+                "status": "success",
+                "is_reservation": False,
+                "message": "O e-mail foi negado na extração."
+            })
 
         # Retornar os dados extraídos como JSON
         return jsonify({
