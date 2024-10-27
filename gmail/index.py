@@ -9,8 +9,11 @@ from datetime import datetime, timedelta, timezone
 import base64
 import requests
 
-hours = 10
-maxResultsSearch = 1
+hours = 10 # até quantas horas no passado deve buscar os resultados
+maxResultsSearch = 1 # resposta maxima de buscas
+
+front_app = 'http://localhost:5001'
+gpt_app = 'http://localhost:5003'
 
 
 def load_processed_ids(filename='./data/package.json'):
@@ -104,7 +107,7 @@ def print_last_emails(service):
 
         print('\nfazendo request')
         # Fazer requisição HTTP para processar o conteúdo do e-mail
-        response = requests.post('http://localhost:5003/process-email', json={"email_content": "Data do email: "+sent_date+"\n"+content})
+        response = requests.post(gpt_app+'/process-email', json={"email_content": "Data do email: "+sent_date+"\n"+content})
         
         # Verificar se a requisição foi bem-sucedida
         if response.status_code == 200:
@@ -129,7 +132,7 @@ def print_last_emails(service):
 
                 # Enviar dados para a fila de confirmação
                 print("dados a serem enviados: ", confirmation_data)
-                confirm_response = requests.post('http://localhost:5001/api/queue_email', json=confirmation_data, headers={'Content-Type': 'application/json'})
+                confirm_response = requests.post(front_app+'/api/queue_email', json=confirmation_data, headers={'Content-Type': 'application/json'})
                 if confirm_response.status_code == 201:
                     print("Dados enviados para a fila de confirmação com sucesso.")
                 else:

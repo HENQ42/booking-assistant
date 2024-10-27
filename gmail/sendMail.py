@@ -5,6 +5,13 @@ from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
+
+# Definindo o assunto e o corpo padrão
+reply_subject = "Reserva Confirmada!"
+reply_body = "Sua reserva foi confirmada com sucesso."
+
+
+
 def reply_to_email(message_id, reply_subject, reply_body):
     service = get_gmail_service()
 
@@ -57,10 +64,6 @@ def reply_to_email(message_id, reply_subject, reply_body):
 def reply_email_route():
     data = request.json
     message_id = data.get("message_id")
-
-    # Definindo o assunto e o corpo padrão
-    reply_subject = "Reserva Confirmada!"
-    reply_body = "Sua reserva foi confirmada com sucesso."
 
     # Verifica se o 'message_id' foi fornecido
     if not message_id:
