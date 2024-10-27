@@ -9,12 +9,13 @@ from datetime import datetime, timedelta, timezone
 import base64
 import requests
 
-hours = 10 # até quantas horas no passado deve buscar os resultados
-maxResultsSearch = 1 # resposta maxima de buscas
+hours = 10 # Até quantas horas no passado deve buscar os resultados
+maxResultsSearch = 1 # Resposta maxima de buscas
 
 front_app = 'http://localhost:5001'
 gpt_app = 'http://localhost:5003'
 
+time_search_emails = 30  # Segundos ou minutos * 60
 
 def load_processed_ids(filename='./data/package.json'):
     # Verificar se o arquivo existe antes de tentar carregá-lo
@@ -164,7 +165,19 @@ def print_last_emails(service):
 def main():
     print("Iniciando a verificação de e-mails...")
     service = get_gmail_service()
-    print_last_emails(service)
+
+    try:
+            # Loop contínuo para monitorar novos e-mails a cada intervalo de tempo
+            while True:
+                print_last_emails(service)
+                
+                # Define um intervalo de monitoramento
+                time.sleep(time_search_emails)  # Pausa por 'time_search_emails' segundos antes de verificar novamente
+
+        except KeyboardInterrupt:
+            print("\nMonitoramento interrompido pelo usuário. Encerrando o programa...")
+
+
 
 if __name__ == '__main__':
     main()

@@ -24,7 +24,7 @@ def reservation_detector(email_content):
             {"role": "system", "content": prompt_system_RESERVARION_DETECTOR},
             {
                 "role": "user",
-                "content": prompt_user_RESERVARION_DETECTOR
+                "content": prompt_user_RESERVARION_DETECTOR(email_content)
             }
         ],
         temperature=TEMPERATURE,

@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Porta da aplicacao orchestrator
-PORT_GPT = 5003
+PORT_GPT = "5003"
 
 # Configurações da API OpenAI
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -21,7 +21,8 @@ MAX_TOKENS_EXTRACTOR = 1500  # Ajuste conforme necessário
 # Outros parâmetros
 HOTEL_NAME = 'Hotel Vitoria'
 
-prompt_user_RESERVARION_DETECTOR = f"""E-mail para análise: {email_content}"""
+def prompt_user_RESERVARION_DETECTOR(email_content):
+    return f"""E-mail para análise: {email_content}"""
 
 prompt_system_RESERVARION_DETECTOR = f"""
     Você é o ReservationDetector do {HOTEL_NAME}. Sua tarefa é determinar se um e-mail recebido está relacionado a uma reserva no {HOTEL_NAME}.
